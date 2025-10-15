@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Vocabulary Quiz</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f9ff;
+      color: #333;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #0056b3;
+    }
+    #question-box {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0077cc;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    #result {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+      color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧩 English Synonym, Acronym & Fill-in Quiz</h1>
+
+  <div id="question-box">
+    <p id="question"></p>
+    <div id="options"></div>
+    <input type="text" id="fillAnswer" placeholder="Type your answer here..." style="display:none">
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+
+  <div id="result"></div>
+  <button id="nextBtn" style="display:none" onclick="nextQuestion()">Next ➡️</button>
+  <button id="finishBtn" style="display:none" onclick="finishQuiz()">Finish 🏁</button>
+
+  <script>
+    const quizData = [
+      // Synonym questions
+      {
+        type: "choice",
+        question: "What is a synonym of 'happy'?",
+        options: ["Sad", "Joyful", "Angry", "Tired"],
+        correct: "Joyful"
+      },
+      {
+        type: "choice",
+        question: "Choose the synonym of 'big':",
+        options: ["Tiny", "Large", "Small", "Little"],
+        correct: "Large"
+      },
+      // Acronym questions
+      {
+        type: "fill",
+        question: "What does the acronym 'HTML' stand for?",
+        correct: "HyperText Markup Language"
+      },
+      {
+        type: "fill",
+        question: "What does 'NASA' stand for?",
+        correct: "National Aeronautics and Space Administration"
+      },
+      // Fill in the blanks
+      {
+        type: "fill",
+        question: "Complete the sentence: The sun ____ in the east.",
+        correct: "rises"
+      },
+      {
+        type: "fill",
+        question: "Fill in: I ____ English every day to improve my vocabulary.",
+        correct: "study"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = quizData[currentQuestion];
+      document.getElementById("result").textContent = "";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("finishBtn").style.display = "none";
+
+      document.getElementById("question").textContent = q.question;
+
+      const optionsDiv = document.getElementById("options");
+      const fillInput = document.getElementById("fillAnswer");
+      optionsDiv.innerHTML = "";
+
+      if (q.type === "choice") {
+        fillInput.style.display = "none";
+        q.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.textContent = opt;
+          btn.style.width = "100%";
+          btn.style.marginTop = "5px";
+          btn.onclick = () => selectOption(opt);
+          optionsDiv.appendChild(btn);
+        });
+      } else if (q.type === "fill") {
+        fillInput.style.display = "block";
+      }
+    }
+
+    let selectedAnswer = "";
+
+    function selectOption(answer) {
+      selectedAnswer = answer;
+      checkAnswer();
+    }
+
+    function checkAnswer() {
+      const q = quizData[currentQuestion];
+      const fillInput = document.getElementById("fillAnswer");
+      let answer = selectedAnswer || fillInput.value.trim();
+
+      if (!answer) {
+        alert("Please enter or select an answer!");
+        return;
+      }
+
+      if (answer.toLowerCase() === q.correct.toLowerCase()) {
+        document.getElementById("result").textContent = "✅ Correct!";
+        score++;
+      } else {
+        document.getElementById("result").textContent = `❌ Wrong! Correct answer: ${q.correct}`;
+      }
+
+      if (currentQuestion < quizData.length - 1) {
+        document.getElementById("nextBtn").style.display = "block";
+      } else {
+        document.getElementById("finishBtn").style.display = "block";
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      selectedAnswer = "";
+      showQuestion();
+    }
+
+    function finishQuiz() {
+      document.body.innerHTML = `
+        <h1>🎉 Quiz Finished!</h1>
+        <p style="text-align:center;font-size:18px;">Your score: <strong>${score}/${quizData.length}</strong></p>
+        <button onclick="window.location.reload()">Try Again 🔁</button>
+      `;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
